@@ -1,0 +1,85 @@
+services:
+  - type: web
+    name: digiexpress-crm-api
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: APP_NAME
+        value: Digiexpress CRM
+
+      - key: APP_URL
+        fromService:
+          type: web
+          name: digiexpress-crm-web
+          property: host
+
+      - key: API_URL
+        fromService:
+          type: web
+          name: digiexpress-crm-api
+          property: host
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: digiexpress-crm-db
+          property: connectionString
+
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+
+      - key: JWT_ACCESS_EXPIRES_IN
+        value: 1h
+
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+
+      - key: BCRYPT_SALT_ROUNDS
+        value: "12"
+
+      - key: INITIAL_ADMIN_EMAIL
+        value: admin@example.com
+
+      - key: M@$oud1370
+        sync: false
+
+      - key: INITIAL_ADMIN_NAME
+        value: مدیر سیستم
+
+      - key: AUTO_SEED
+        value: "true"
+
+      - key: SEED_DEMO_DATA
+        value: "true"
+
+      - key: TZ
+        value: Asia/Tehran
+
+  - type: web
+    name: digiexpress-crm-web
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: digiexpress-crm-api
+          property: host
+
+databases:
+  - name: digiexpress-crm-db
+    plan: free
+    databaseName: crm
+    user: crm_user

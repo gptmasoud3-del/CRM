@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.docker-tmp/
+.design-reference/
+backups/
+*.log
+coverage/
+.DS_Store
